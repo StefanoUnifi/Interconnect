@@ -1,0 +1,8 @@
+/django_prog_socialnetwork/.env
+/.idea
+staticfiles
+__pycache__/
+*.pyc
+migrations
+/db.sqlite3
+avatar/

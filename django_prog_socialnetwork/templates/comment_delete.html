@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container col-lg-8 border-3 border rounded-3 p-3">
+    <h1>Elimina</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>Sicuro di voler eliminare il commento?</p>
+        <button class="btn btn-danger ml-2" type="submit">Conferma</button>
+    </form>
+</div>
+{% endblock content %}

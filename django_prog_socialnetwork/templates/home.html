@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block quill %}
+{{ form.media }}
+{% endblock quill %}
+
+{% block content %}
+{% for post in post_list %}
+
+{% include 'post_base.html' %}
+
+{% endfor %}
+
+{% if not post_list %}
+<p class="text-muted text-center"><i class="bi bi-cup-hot-fill"></i> Il tuo feed è vuoto,
+    <a href="{% url 'user_list' %}">
+        inizia a seguire qualche utente per vedere i loro post!à
+    </a>
+</p>
+{% endif %}
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/likes.js' %}"></script>
+<script src="{% static 'js/comments.js' %}"></script>
+{% endblock scripts %}

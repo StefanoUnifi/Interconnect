@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block quill %}
+{{ form.media }}
+{% endblock quill %}
+
+{% block content %}
+
+{% include 'post_base.html' %}
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/likes.js' %}"></script>
+<script src="{% static 'js/comments.js' %}"></script>
+{% endblock scripts %}
