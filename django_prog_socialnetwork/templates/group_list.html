@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Gruppi</h1>
+<ul>
+    {% for group in groups %}
+    <li class="mb-2">
+        <a href="{% url 'group_detail' group.id %}" class="text-blue-600 hover:underline">{{ group.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

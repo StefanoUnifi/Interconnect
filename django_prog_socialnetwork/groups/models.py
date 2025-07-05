@@ -3,7 +3,7 @@ from django.conf import settings
 
 # Create your models here.
 
-class Groups(models.Model):
+class GroupForm(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -19,7 +19,7 @@ class GroupMembership(models.Model):
         ('moderator', 'Moderator'),
     ]
 
-    group = models.ForeignKey(Groups, on_delete=models.CASCADE)
+    group = models.ForeignKey(GroupForm, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='member')
     joined_at = models.DateTimeField(auto_now_add=True)
@@ -32,7 +32,7 @@ class GroupMembership(models.Model):
 
 
 class GroupPost(models.Model):
-    group = models.ForeignKey(Groups, on_delete=models.CASCADE, related_name='posts')
+    group = models.ForeignKey(GroupForm, on_delete=models.CASCADE, related_name='posts')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
