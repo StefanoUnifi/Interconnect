@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./django_prog_socialnetwork
+    command: gunicorn django_prog_socialnetwork.wsgi:application --bind 0.0.0.0:8000 && python manage.py collectstatic
+    volumes:
+      - static_volume:/django_prog_socialnetwork/static
+      - media_volume:/django_prog_socialnetwork/media
+    expose:
+      - 8000
+    env_file:
+      - env.prod
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15.3-alpine3.18
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file:
+      - env.db
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/django_prog_socialnetwork/static
+      - media_volume:/django_prog_socialnetwork/media
+    ports:
+        - 8000:80
+    depends_on:
+      - web
+
+volumes:
+    postgres_data:
+    static_volume:
+    media_volume:
