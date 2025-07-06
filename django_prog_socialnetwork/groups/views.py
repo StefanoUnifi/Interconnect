@@ -1,44 +1,83 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
-from openpyxl.pivot.cache import GroupMember
+from django.views.generic import DetailView, CreateView, DeleteView
 from django.contrib import messages
+from django.views import View
 from .models import GroupForm, GroupPost, GroupMembership
 from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 
-def group_list(LoginRequiredMixin, request):
-    groups = GroupForm.objects.all()
-    return render(request, 'groups/group_list.html'), {'groups': groups}
+class GroupView(LoginRequiredMixin, View):
+    def get(self, request):
+        groups = GroupForm.objects.all()
+        return render(request, 'groups/group_list.html', {'groups': groups})
 
-def group_detail(LoginRequiredMixin, request, group_id):
-    group = get_object_or_404(GroupForm, id=group_id)
-    posts = group.posts.all()
-    return render(request, 'groups/group_detail.html', {'group': group, 'posts': group.posts})
+class GroupDetailView(LoginRequiredMixin, DetailView):
+    def get(self, request, group_id):
+        group = get_object_or_404(GroupForm, id=group_id)
+        posts = group.posts.all()
+        is_member = GroupMembership.objects.filter(group=group, user=request.user).exists()
+        is_moderator = group.is_moderator(request.user)
+        return render(
+            request, 'groups/group_detail.html', {
+                'group': group,
+                'posts': posts,
+                'is_member': is_member,
+                'is_moderator': is_moderator
+            }
+        )
 
-def create_post(LoginRequiredMixin, request, group_id):
-    group = get_object_or_404(GroupForm, id=group_id)
-    if request.method == 'POST':
-        content = request.POST.get('content')
-        if content:
-            GroupPost.objects.create(group=group, author=request.user,content=content)
+class GroupJoinView(LoginRequiredMixin, View):
+    def post(request, group_id):
+        group = get_object_or_404(GroupForm, id=group_id)
+        GroupMembership.objects.get_or_create(group=group, user=request.user)
+
+        messages.success(request, f'Ti sei unito al gruppo {group.name}.')
         return redirect('group_detail', group_id=group.id)
 
-    return render(request, 'groups/create_post.html', {'group': group})
+class GroupLeaveView(LoginRequiredMixin, View):
+    def post(self, request, group_id):
+        group = get_object_or_404(GroupForm, id=group_id)
+        GroupMembership.objects.filter(group=group, user=request.user).delete()
 
-def delete_post(LoginRequiredMixin, request, group_id):
-    post = get_object_or_404(GroupForm, id=group_id)
-    membership = GroupMember.objects.filter(group=post.group, user=request.user, is_moderator=True).first()
+        messages.success(request, f'Hai lasciato il gruppo {group.name}.')
+        return redirect('group_list')
 
-    if request.user == post.author or membership:
-        post.delete()
-        messages.success(request, 'Post eliminato.')
-    return redirect('group_detail', group_id=post.group.id)
+class CreateGroupPostView(LoginRequiredMixin, CreateView):
+    def post(self, request, group_id):
+        group = get_object_or_404(GroupForm, id=group_id)
+        if not GroupMembership.objects.filter(group=group, user=request.user).exists():
+            messages.error(request, 'Non fai parte di questo gruppo.')
+            return redirect('group_detail', group_id=group.id)
 
-def remove_user(LoginRequiredMixin, request, group_id, user_id):
-    group = get_object_or_404(GroupForm, id=group_id)
-    membership = GroupMember.objects.filter(group=group, user=request.user, is_moderator=True).first()
+        content = request.POST.get('content')
+        if content:
+            GroupPost.objects.create(group=group, author=request.user, content=content)
+            messages.success(request, 'Post creato con successo.')
+        return redirect('group_detail', group_id=group.id)
 
-    if membership:
-        GroupMembership.objects.filter(group=group, user=request.user, is_moderator=True).delete()
-        messages.success(request, 'Utente rimosso dal gruppo.')
+class DeleteGroupPostView(LoginRequiredMixin, DeleteView):
+    def post(self, request, group_id, post_id):
+        post = get_object_or_404(GroupPost, id=post_id)
+        group = post.group
 
-    return redirect('group_detail', group_id=group.id)
+        if request.user == post.author or group.is_moderator(request.user):
+            post.delete()
+            messages.success(request, 'Post eliminato.')
+        else:
+            messages.error(request, 'Non hai i permessi per eliminare questo post.')
+
+        return redirect('group_detail', group_id=group.id)
+
+class RemoveUserView(LoginRequiredMixin, DeleteView):
+    def post(self, request, group_id, user_id):
+        group = get_object_or_404(GroupForm, id=group_id)
+        user_to_remove = get_object_or_404(User, id=user_id)
+
+        if not group.is_moderator(request.user):
+            messages.error(request, 'Non hai i permessi per rimuovere utenti da questo gruppo.')
+            return redirect('group_detail', group_id=group.id)
+
+        GroupMembership.objects.filter(group=group, user=user_to_remove).delete()
+        messages.success(request, f'{user_to_remove.username} è stato rimosso dal gruppo.')
+        return redirect('group_detail', group_id=group.id)

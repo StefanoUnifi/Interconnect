@@ -1,45 +1,57 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h1 class="text-2xl font-bold">{{ group.name }}</h1>
-<p>{{ group.description }}</p>
+<h2>{{ group.name }}</h2>
 
-<h2 class="text-xl mt-4 mb-2">Post del Gruppo</h2>
+{% if is_member %}
+<form method="post" action="{% url 'leave_group' group.id %}">
+    {% csrf_token %}
+    <button type="submit">Lascia gruppo</button>
+</form>
+{% else %}
+<form method="post" action="{% url 'join_group' group.id %}">
+    {% csrf_token %}
+    <button type="submit">Unisciti al gruppo</button>
+</form>
+{% endif %}
+
+<h3>Post</h3>
 <ul>
     {% for post in posts %}
-    <li class="border p-2 mb-2 rounded">
+    <li>
         <strong>{{ post.author.username }}</strong>: {{ post.content }}
-        <small class="block text-gray-500">{{ post.created_at }}</small>
-
-        {% if user|is_moderator:group or user == post.author %}
-        <form method="post" action="{% url 'delete_post' post.id %}" class="mt-2">
+        {% if user == post.author or is_moderator %}
+        <form method="post" action="{% url 'delete_post' group.id post.id %}" style="display:inline;">
             {% csrf_token %}
-            <button type="submit" class="text-red-600">Elimina</button>
+            <button type="submit">Elimina</button>
         </form>
         {% endif %}
     </li>
-    {% empty %}
-    <li>Nessun post ancora.</li>
     {% endfor %}
 </ul>
 
-<a href="{% url 'create_post' group.id %}" class="mt-4 inline-block bg-blue-500 text-white py-2 px-4 rounded">Scrivi un Post</a>
+{% if is_member %}
+<form method="post" action="{% url 'create_post' group.id %}">
+    {% csrf_token %}
+    <textarea name="content" placeholder="Scrivi un post"></textarea>
+    <button type="submit">Pubblica</button>
+</form>
+{% endif %}
 
-<h2 class="text-xl mt-6 mb-2">Membri</h2>
+{% if is_moderator %}
+<h4>Membri</h4>
 <ul>
     {% for membership in group.groupmembership_set.all %}
     <li>
         {{ membership.user.username }}
-        {% if membership.is_moderator %} <strong>(Moderatore)</strong> {% endif %}
-
-        {% if user|is_moderator:group and membership.user != user %}
-        <form method="post" action="{% url 'remove_user' group.id membership.user.id %}" class="inline ml-2">
+        {% if membership.user != user %}
+        <form method="post" action="{% url 'remove_user' group.id membership.user.id %}">
             {% csrf_token %}
-            <button type="submit" class="text-red-600 text-sm">Rimuovi</button>
+            <button type="submit">Rimuovi</button>
         </form>
         {% endif %}
     </li>
     {% endfor %}
 </ul>
+{% endif %}
 
 {% endblock %}

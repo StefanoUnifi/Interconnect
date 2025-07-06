@@ -1,14 +1,23 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 class GroupForm(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True, null=True)
+    members = models.ManyToManyField(User, related_name='groups')
+    moderators = models.ManyToManyField(User, related_name='moderated_groups')
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def is_moderator(self, user):
+        return self.moderators.filter(id=user.id).exists()
+
+    def is_member(self, user):
+        return self.members.filter(id=user.id).exists()
 
     def __str__(self):
         return self.name
