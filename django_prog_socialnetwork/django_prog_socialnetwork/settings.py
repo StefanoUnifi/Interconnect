@@ -87,14 +87,10 @@ WSGI_APPLICATION = 'django_prog_socialnetwork.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': env('SQL_ENGINE'),
-        'NAME': env('SQL_DATABASE'),
-        'USER': env('SQL_USER'),
-        'PASSWORD': env('SQL_PASSWORD'),
-        'HOST': env('SQL_HOST'),
-        'PORT': env('SQL_PORT'),
-    }
+    'default': env.db(
+        'DATABASE_URL',
+        default=f"postgres://{env('SQL_USER', default='postgres')}:{env('SQL_PASSWORD', default='postgres')}@{env('SQL_HOST', default='db')}:{env('SQL_PORT', default='5432')}/{env('SQL_DATABASE', default='interconnect_db')}"
+    )
 }
 
 
