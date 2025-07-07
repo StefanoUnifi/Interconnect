@@ -1,14 +1,13 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
 
 # Create your models here.
 
-class GroupForm(models.Model):
+class CustomGroup(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True, null=True)
-    members = models.ManyToManyField(User, related_name='groups')
-    moderators = models.ManyToManyField(User, related_name='moderated_groups')
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='group_members', blank=True)
+    moderators = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='group_moderators', blank=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -28,7 +27,7 @@ class GroupMembership(models.Model):
         ('moderator', 'Moderator'),
     ]
 
-    group = models.ForeignKey(GroupForm, on_delete=models.CASCADE)
+    group = models.ForeignKey(CustomGroup, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='member')
     joined_at = models.DateTimeField(auto_now_add=True)
@@ -41,7 +40,7 @@ class GroupMembership(models.Model):
 
 
 class GroupPost(models.Model):
-    group = models.ForeignKey(GroupForm, on_delete=models.CASCADE, related_name='posts')
+    group = models.ForeignKey(CustomGroup, on_delete=models.CASCADE, related_name='posts')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

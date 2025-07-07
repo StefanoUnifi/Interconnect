@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import GroupForm, GroupMembership, GroupPost
+from .models import CustomGroup, GroupMembership, GroupPost
 
 # Register your models here.
 
