@@ -39,10 +39,10 @@ Questi 2 devi crearli per rispettivamente:
 * per definire le variabili di postgres
 
 Successivamente esegui docker e poi su shell:
-  docker compose -f docker-compose.yml up -d --build 
-  docker compose exec web python manage.py makemigrations
-  docker compose exec web python manage.py makemigrations accounts posts groups 
-  docker compose exec web python manage.py migrate
+* docker compose -f docker-compose.yml up -d --build 
+* docker compose exec web python manage.py makemigrations
+* docker compose exec web python manage.py makemigrations accounts posts groups 
+* docker compose exec web python manage.py migrate
 
 Questi comandi rispettivamente:
 * avvia il container e ri-crea le immagini del progetto
