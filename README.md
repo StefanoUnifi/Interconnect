@@ -1,5 +1,5 @@
 # Interconnect
-Interconnect è un piccolo social network creato con il framework di Django.
+Interconnect è un piccolo social network creato con il framework di Django. https://interconnect-production.up.railway.app/
 
 Su Interconnect puoi:
 * Seguire/Non seguire altri utenti
