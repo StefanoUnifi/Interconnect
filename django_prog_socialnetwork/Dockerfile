@@ -6,7 +6,8 @@ ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
 RUN apk update \
-    && apk add postgresql-dev gcc python3-dev musl-dev
+    && apk add --no-cache postgresql-dev gcc python3-dev musl-dev libffi-dev
+
 RUN mkdir /django_prog_socialnetwork/media /django_prog_socialnetwork/static
 
 RUN pip install --upgrade pip
@@ -17,4 +18,4 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "django_prog_socialnetwork.wsgi:application", "--bind", "0.0.0.0:8000"]
