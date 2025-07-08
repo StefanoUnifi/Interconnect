@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import dj_database_url
+#import dj_database_url
 from environ import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -88,15 +88,15 @@ WSGI_APPLICATION = 'django_prog_socialnetwork.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default' : dj_database_url.config(default=env('DATABASE_URL'))
-    #'default': {
-    #    'ENGINE': env('SQL_ENGINE'),
-    #    'NAME': env('SQL_DATABASE'),
-    #    'USER': env('SQL_USER'),
-    #    'PASSWORD': env('SQL_PASSWORD'),
-    #    'HOST': env('SQL_HOST'),
-    #    'PORT': env('SQL_PORT'),
-    #}
+    #'default' : dj_database_url.config(default=env('DATABASE_URL'))
+    'default': {
+        'ENGINE': env('SQL_ENGINE'),
+        'NAME': env('SQL_DATABASE'),
+        'USER': env('SQL_USER'),
+        'PASSWORD': env('SQL_PASSWORD'),
+        'HOST': env('SQL_HOST'),
+        'PORT': env('SQL_PORT'),
+    }
 }
 
 
