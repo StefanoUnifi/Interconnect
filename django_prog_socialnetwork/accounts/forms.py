@@ -25,7 +25,7 @@ class CustomUserChangeForm(UserChangeForm):
         fields = (
             'email',
             'username',
-            'avatar'.
+            'avatar'
         )
 
 class UserProfileEdit(forms.ModelForm):
