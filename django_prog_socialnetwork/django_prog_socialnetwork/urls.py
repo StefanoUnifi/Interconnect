@@ -16,11 +16,15 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.urls import path, include
 from django.conf import settings
 
+from posts.views import PostListView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', login_required(PostListView.as_view()), name='home'),
     path('', include('posts.urls')),
     path('', include('accounts.urls')),
     path('', include('groups.urls')),

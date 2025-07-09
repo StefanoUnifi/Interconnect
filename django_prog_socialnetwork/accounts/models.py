@@ -1,3 +1,4 @@
+import os
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from PIL import Image
@@ -14,27 +15,29 @@ class CustomUser(AbstractUser):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        if self.avatar:
-            image = Image.open(self.avatar.path)
+        try:
+            if self.avatar and hasattr(self.avatar, 'path') and os.path.isfile(self.avatar.path):
+                image = Image.open(self.avatar.path)
 
-            aspect_ratio = image.width / image.height
-            if aspect_ratio > 1:
-                new_width = image.height
-                new_height = image.height
-            else:
-                new_width = image.width
-                new_height = image.width
+                aspect_ratio = image.width / image.height
+                if aspect_ratio > 1:
+                    new_width = image.height
+                    new_height = image.height
+                else:
+                    new_width = image.width
+                    new_height = image.width
 
-            left = (image.width - new_width) // 2
-            top = (image.height - new_height) // 2
-            right = left + new_width
-            bottom = top + new_height
+                left = (image.width - new_width) // 2
+                top = (image.height - new_height) // 2
+                right = left + new_width
+                bottom = top + new_height
 
-            cropped_image = image.crop((left, top, right, bottom))
+                cropped_image = image.crop((left, top, right, bottom))
+                cropped_image = cropped_image.resize((600, 600), Image.ANTIALIAS)
+                cropped_image.save(self.avatar.path)
 
-            cropped_image = cropped_image.resize((600,600), Image.ANTIALIAS)
-
-            cropped_image.save(self.avatar.path)
+        except Exception as e:
+            print(f"Errore durante il salvataggio avatar: {e}")
 
 
 class UserFollowing(models.Model):
