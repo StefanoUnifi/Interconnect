@@ -1,9 +1,8 @@
 /django_prog_socialnetwork/.env
-.idea
+/.idea
 staticfiles
 __pycache__/
 *.pyc
 migrations
 /db.sqlite3
 avatar/
-create_admin.py
