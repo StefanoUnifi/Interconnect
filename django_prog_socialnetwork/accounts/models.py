@@ -32,7 +32,7 @@ class CustomUser(AbstractUser):
 
             cropped_image = image.crop((left, top, right, bottom))
 
-            cropped_image = = cropped_image.resize((600,600), Image.ANTIALIAS)
+            cropped_image = cropped_image.resize((600,600), Image.ANTIALIAS)
 
             cropped_image.save(self.avatar.path)
 
