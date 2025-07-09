@@ -9,7 +9,7 @@ class CommentsAdmin(admin.TabularInline):
 
 class PostAdmin(admin.ModelAdmin):
     readonly_fields = ('pk', 'create_date', 'update_date')
-
+    exclude = ('likes',)
     inlines = [
         CommentsAdmin,
     ]

@@ -23,6 +23,7 @@ class CommentCreateView(View):
             comment.save()
         return redirect(request.META.get('HTTP_REFERER'))
 
+
 class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Comment
     template_name = 'comment_delete.html'
@@ -32,14 +33,16 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         post = self.get_object()
         return self.request.user == post.author
 
+
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    template_name = 'comment_delete.html'
+    template_name = 'post_delete.html'
     success_url = reverse_lazy('home')
 
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+
 
 class PostListView(LoginRequiredMixin, ListView):
     model = Post
@@ -53,12 +56,14 @@ class PostListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         followed_users = UserFollowing.objects.filter(
             user_id=self.request.user
-        )
+        ).values_list('following_user_id', flat=True)
 
         queryset = Post.objects.filter(
             Q(author=self.request.user) | Q(author__in=followed_users)
         )
+
         return queryset
+
 
 class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
@@ -73,6 +78,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostForm
@@ -82,14 +88,26 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         obj = self.get_object()
         return obj.author == self.request.user
 
+
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    form_class = PostForm
     template_name = 'post_create.html'
+    form_class = PostForm
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    template_name = 'post_delete.html'
+    success_url = reverse_lazy('home')
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
+
 
 def like_post(request, pk):
     post = Post.objects.get(pk=pk)
@@ -107,4 +125,5 @@ def like_post(request, pk):
         'count': post.likes.count(),
         'user_has_liked': post.likes.filter(id=user.id).exists(),
     }
+
     return JsonResponse(data)

@@ -7,7 +7,8 @@ from django_quill.fields import QuillField
 
 class Post(models.Model):
     author = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE
+        CustomUser,
+        on_delete=models.CASCADE,
     )
     body = QuillField(blank=False, null=False)
     create_date = models.DateTimeField(auto_now_add=True)
@@ -22,11 +23,12 @@ class Post(models.Model):
         return str(self.author) + '_' + str(self.pk)
 
     def get_absolute_url(self):
-        return reverse('post-detail', args=[self.author, self.pk])
+        return reverse('post_detail', args=[self.author, self.pk])
 
     class Meta:
         db_table = 'posts_post'
         ordering = ['-create_date']
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

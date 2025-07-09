@@ -1,4 +1,3 @@
-from .forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -15,6 +14,7 @@ class SignUpView(CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
+
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = CustomUser
@@ -42,6 +42,7 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
         return context
 
+
 class FollowToggleView(View):
     def post(self, request, pk, *args, **kwargs):
         user_to_follow = get_object_or_404(CustomUser, pk=pk)
@@ -59,6 +60,7 @@ class FollowToggleView(View):
 
         next_page = request.POST.get('next_page', '/')
         return redirect(next_page)
+
 
 class UserListView(LoginRequiredMixin, ListView):
     model = CustomUser
@@ -81,9 +83,10 @@ class UserListView(LoginRequiredMixin, ListView):
         context['following'] = following
         return context
 
+
 class ChangeUserProfile(LoginRequiredMixin, UpdateView):
     model = CustomUser
-    template = 'user_change.html'
+    template_name = 'user_change.html'
     form_class = UserProfileEdit
 
     def get_success_url(self):
