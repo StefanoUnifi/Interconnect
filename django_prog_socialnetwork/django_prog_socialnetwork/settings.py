@@ -163,7 +163,7 @@ EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 
 #Avatar  management w/ images
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
 #Cripsy form
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
