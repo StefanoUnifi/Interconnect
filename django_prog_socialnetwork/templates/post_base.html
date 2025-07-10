@@ -1,9 +1,15 @@
+{% load static %}
 <article class="mb-3 post">
     <div class="row justify-content-center align-items-center">
         <div class="card border border-2  rounded-3" style="width: 40rem;">
 
             <div class="card-body">
-                <img src="{{post.author.avatar.url}}" alt="user" class="img-fluid rounded-5 me-1" style="max-width: 50px;">
+                {% if post.author.avatar and post.author.avatar.url %}
+                    <img src="{{ post.author.avatar.url }}" alt="user" class="img-fluid rounded-5 me-1" style="max-width: 50px;">
+                {% else %}
+                    <img src="{% static 'img/user_avatar.png' %}" alt="default user" class="img-fluid rounded-5 me-1" style="max-width: 50px;">
+                {% endif %}
+
                 <h1 class="card-title h6" style="display: inline;">
                     <a class="text-decoration-none" href="{% url 'user_profile' post.author.pk %}">@{{post.author}}</a></h1>
                 {% if user.pk == post.author.pk or request.resolver_match.url_name != 'post_detail' %}
