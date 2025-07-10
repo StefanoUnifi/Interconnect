@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import DetailView, CreateView, DeleteView
 from django.contrib import messages
 from django.views import View
@@ -86,8 +87,9 @@ class RemoveUserView(LoginRequiredMixin, DeleteView):
 
 class CreateGroupView(LoginRequiredMixin, CreateView):
     model = CustomGroup
-    fields = GroupForm
+    form_class = GroupForm
     template_name = 'group_create.html'
+    success_url = reverse_lazy('group_list')
 
     def form_valid(self, form):
         group = form.save(commit=False)
