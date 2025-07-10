@@ -30,7 +30,7 @@ class GroupDetailView(LoginRequiredMixin, DetailView):
         )
 
 class GroupJoinView(LoginRequiredMixin, View):
-    def post(request, group_id):
+    def post(self, request, group_id):
         group = get_object_or_404(CustomGroup, id=group_id)
         GroupMembership.objects.get_or_create(group=group, user=request.user)
 
