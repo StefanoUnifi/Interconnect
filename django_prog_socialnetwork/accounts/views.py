@@ -7,16 +7,18 @@ from .models import CustomUser, UserFollowing
 from .forms import UserProfileEdit
 from posts.models import Post
 from posts.forms import CommentForm
+from django.contrib.auth import login
 
 # Create your views here.
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('home')
     template_name = 'registration/signup.html'
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        login(self.request, self.object)
         return response
 
 class UserDetailView(LoginRequiredMixin, DetailView):
