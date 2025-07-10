@@ -25,9 +25,9 @@ from posts.views import PostListView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login_required(PostListView.as_view()), name='home'),
-    path('', include('posts.urls')),
-    path('', include('accounts.urls')),
-    path('', include('groups.urls')),
+    path('posts/', include('posts.urls')),
+    path('accounts/', include('accounts.urls')),
+    path('groups/', include('groups.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
 ]
 
