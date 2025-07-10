@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">Gruppi</h1>
-<ul>
-    {% for group in groups %}
-    <li class="mb-2">
-        <a href="{% url 'group_detail' group.id %}" class="text-blue-600 hover:underline">{{ group.name }}</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Gruppi</h1>
+  <a href="{% url 'group_create' %}" class="btn btn-success">Crea nuovo gruppo</a>
+</div>
+
+<ul class="list-group">
+  {% for group in groups %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'group_detail' group.id %}">{{ group.name }}</a>
+      <span class="badge bg-secondary">{{ group.groupmembership_set.count }} membri</span>
     </li>
-    {% endfor %}
+  {% empty %}
+    <li class="list-group-item text-muted">Ancora nessun gruppo creato.</li>
+  {% endfor %}
 </ul>
 {% endblock %}

@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import DetailView, CreateView, DeleteView
 from django.contrib import messages
 from django.views import View
+from .forms import GroupForm
 from .models import CustomGroup, GroupPost, GroupMembership
 from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
@@ -80,4 +81,19 @@ class RemoveUserView(LoginRequiredMixin, DeleteView):
 
         GroupMembership.objects.filter(group=group, user=user_to_remove).delete()
         messages.success(request, f'{user_to_remove.username} è stato rimosso dal gruppo.')
+        return redirect('group_detail', group_id=group.id)
+
+
+class CreateGroupView(LoginRequiredMixin, CreateView):
+    model = CustomGroup
+    fields = GroupForm
+    template_name = 'groups/group_create.html'
+
+    def form_valid(self, form):
+        group = form.save(commit=False)
+        group.created_by = self.request.user
+        group.save()
+        form.save_m2m()
+        GroupMembership.objects.create(group=group, user=self.request.user, role='moderator')
+        messages.success(self.request, 'Gruppo creato con successo.')
         return redirect('group_detail', group_id=group.id)
