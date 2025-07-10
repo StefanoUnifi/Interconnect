@@ -17,8 +17,8 @@ class CustomUserCreationForm(UserCreationForm):
             'avatar',
             'bio',
             'age',
-            'password',
-            'verify_password',
+            'password1',
+            'password2',
         )
 
 class CustomUserChangeForm(UserChangeForm):
