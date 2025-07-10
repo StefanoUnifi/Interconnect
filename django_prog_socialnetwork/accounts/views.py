@@ -15,6 +15,9 @@ class SignUpView(CreateView):
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        return response
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = CustomUser
