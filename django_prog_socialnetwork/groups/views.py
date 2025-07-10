@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 class GroupView(LoginRequiredMixin, View):
     def get(self, request):
         groups = CustomGroup.objects.all()
-        return render(request, 'groups/group_list.html', {'groups': groups})
+        return render(request, 'group_list.html', {'groups': groups})
 
 class GroupDetailView(LoginRequiredMixin, DetailView):
     def get(self, request, group_id):
@@ -20,7 +20,7 @@ class GroupDetailView(LoginRequiredMixin, DetailView):
         is_member = GroupMembership.objects.filter(group=group, user=request.user).exists()
         is_moderator = group.is_moderator(request.user)
         return render(
-            request, 'groups/group_detail.html', {
+            request, 'group_detail.html', {
                 'group': group,
                 'posts': posts,
                 'is_member': is_member,
@@ -87,7 +87,7 @@ class RemoveUserView(LoginRequiredMixin, DeleteView):
 class CreateGroupView(LoginRequiredMixin, CreateView):
     model = CustomGroup
     fields = GroupForm
-    template_name = 'groups/group_create.html'
+    template_name = 'group_create.html'
 
     def form_valid(self, form):
         group = form.save(commit=False)
