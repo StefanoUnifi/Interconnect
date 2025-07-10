@@ -48,11 +48,11 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class FollowToggleView(View):
+class FollowToggleView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         user_to_follow = get_object_or_404(CustomUser, pk=pk)
 
-        action = request.POST.get('action')
+        action = request.POST.get('action','').lower()
 
         if action == 'follow':
             UserFollowing.objects.create(
