@@ -31,7 +31,7 @@
                 <button class="btn card-link like-button {% if request.user in post.likes.all %}liked{% endif %}"
                         id="like-button-{{ post.pk }}" onclick="handleLike('{{ post.pk }}')">
                     <i class=" bi bi-heart-fill"></i></button>
-                <span id="like-count-{{ post.pk }}">{{ post.total_likes }}</span>
+                <span id="like-count-{{ post.pk }}">{{ post.likes.count }}</span>
 
                 <!-- Comment Button -->
                 <button id="comment-toggler-{{ post.pk }}" class="btn card-link"
